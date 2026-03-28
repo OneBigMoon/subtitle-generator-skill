@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gcc \
     g++ \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # 升级 pip
@@ -20,8 +21,8 @@ RUN pip install --no-cache-dir torch==2.1.0 torchaudio==2.1.0 --index-url https:
 # 安装 whisper 依赖
 RUN pip install --no-cache-dir more-itertools tiktoken
 
-# 安装 openai-whisper (不使用 --no-build-isolation，因为需要编译)
-RUN pip install --no-cache-dir openai-whisper==20240930
+# 从 GitHub 安装 openai-whisper (避免构建问题)
+RUN pip install --no-cache-dir git+https://github.com/openai/whisper.git@v20240930
 
 # 安装 API 依赖
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart pydantic
