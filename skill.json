@@ -1,15 +1,29 @@
 {
   "name": "subtitle-generator",
-  "displayName": "字幕生成器",
-  "description": "基于音频和口播稿生成 SRT 字幕文件",
+  "displayName": "字幕生成器 / 字幕打轴",
+  "description": "基于音频和口播稿进行字幕打轴，生成带时间戳的 SRT 字幕文件",
   "version": "1.0.0",
   "author": "onebigmoon",
   "license": "MIT",
-  "type": "docker",
+  "type": "api",
   "entry": {
-    "type": "docker",
-    "image": "subtitle-generator:latest",
-    "command": ["python", "subtitle_generator.py"]
+    "type": "http",
+    "url": "http://localhost:8000",
+    "endpoints": {
+      "generate": {
+        "path": "/generate",
+        "method": "POST",
+        "contentType": "multipart/form-data"
+      },
+      "models": {
+        "path": "/models",
+        "method": "GET"
+      },
+      "health": {
+        "path": "/health",
+        "method": "GET"
+      }
+    }
   },
   "parameters": {
     "audio": {
@@ -19,13 +33,8 @@
     },
     "script": {
       "type": "string",
-      "description": "口播稿文本或文件路径",
+      "description": "口播稿文本内容",
       "required": true
-    },
-    "output": {
-      "type": "file",
-      "description": "输出 SRT 文件路径",
-      "required": false
     },
     "model": {
       "type": "enum",
@@ -33,9 +42,34 @@
       "options": ["tiny", "base", "small", "medium", "large"],
       "default": "base",
       "required": false
+    },
+    "format": {
+      "type": "enum",
+      "description": "返回格式",
+      "options": ["json", "file"],
+      "default": "json",
+      "required": false
     }
   },
   "inputs": ["audio", "script"],
-  "outputs": ["srt"],
-  "tags": ["subtitle", "whisper", "audio", "srt"]
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "是否成功"
+    },
+    "message": {
+      "type": "string",
+      "description": "结果消息"
+    },
+    "srt_content": {
+      "type": "string",
+      "description": "SRT 字幕内容"
+    }
+  },
+  "tags": ["subtitle", "whisper", "audio", "srt", "api", "字幕打轴", "打轴"],
+  "docker": {
+    "image": "subtitle-generator:latest",
+    "ports": ["8000:8000"],
+    "composeFile": "docker-compose.yml"
+  }
 }

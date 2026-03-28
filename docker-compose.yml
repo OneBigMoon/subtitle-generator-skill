@@ -4,13 +4,18 @@ services:
   subtitle-generator:
     build: .
     image: subtitle-generator:latest
-    container_name: subtitle-generator
+    container_name: subtitle-generator-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./input:/app/input
       - ./output:/app/output
-    environment:
-      - PYTHONUNBUFFERED=1
-    # 默认显示帮助信息
-    command: ["--help"]
-    # 使用时可以覆盖 command:
-    # command: ["/app/input/audio.mp3", "/app/input/script.txt", "-o", "/app/output/subtitle.srt"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

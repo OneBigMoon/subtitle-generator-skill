@@ -37,8 +37,10 @@ env/
 Thumbs.db
 
 # Input/Output files (user data)
-input/
-output/
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
 *.mp3
 *.wav
 *.srt
