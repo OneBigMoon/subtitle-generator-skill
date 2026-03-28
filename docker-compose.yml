@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  subtitle-generator:
+    build: .
+    image: subtitle-generator:latest
+    container_name: subtitle-generator
+    volumes:
+      - ./input:/app/input
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    # 默认显示帮助信息
+    command: ["--help"]
+    # 使用时可以覆盖 command:
+    # command: ["/app/input/audio.mp3", "/app/input/script.txt", "-o", "/app/output/subtitle.srt"]

@@ -1,0 +1,41 @@
+{
+  "name": "subtitle-generator",
+  "displayName": "字幕生成器",
+  "description": "基于音频和口播稿生成 SRT 字幕文件",
+  "version": "1.0.0",
+  "author": "onebigmoon",
+  "license": "MIT",
+  "type": "docker",
+  "entry": {
+    "type": "docker",
+    "image": "subtitle-generator:latest",
+    "command": ["python", "subtitle_generator.py"]
+  },
+  "parameters": {
+    "audio": {
+      "type": "file",
+      "description": "音频文件路径 (MP3/WAV等)",
+      "required": true
+    },
+    "script": {
+      "type": "string",
+      "description": "口播稿文本或文件路径",
+      "required": true
+    },
+    "output": {
+      "type": "file",
+      "description": "输出 SRT 文件路径",
+      "required": false
+    },
+    "model": {
+      "type": "enum",
+      "description": "Whisper 模型大小",
+      "options": ["tiny", "base", "small", "medium", "large"],
+      "default": "base",
+      "required": false
+    }
+  },
+  "inputs": ["audio", "script"],
+  "outputs": ["srt"],
+  "tags": ["subtitle", "whisper", "audio", "srt"]
+}
