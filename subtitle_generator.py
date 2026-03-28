@@ -336,7 +336,51 @@ class SubtitleGenerator:
 
             script_char_index += seg_length
 
+        # 处理时间重叠问题
+        subtitle_entries = self._fix_time_overlaps(subtitle_entries)
+
         return subtitle_entries
+
+    def _fix_time_overlaps(self, subtitle_entries: List[Dict]) -> List[Dict]:
+        """
+        修复字幕时间重叠问题
+        确保前一条字幕的结束时间 <= 后一条字幕的开始时间
+
+        Args:
+            subtitle_entries: 字幕条目列表
+
+        Returns:
+            修复后的字幕条目列表
+        """
+        if not subtitle_entries or len(subtitle_entries) < 2:
+            return subtitle_entries
+
+        fixed_entries = []
+        min_gap = 0.1  # 最小间隔 100ms
+
+        for i, entry in enumerate(subtitle_entries):
+            if i == 0:
+                fixed_entries.append(entry)
+                continue
+
+            prev_entry = fixed_entries[-1]
+            current_start = entry['start']
+            current_end = entry['end']
+
+            # 检查是否有重叠
+            if current_start < prev_entry['end']:
+                # 有重叠，调整前一条字幕的结束时间
+                new_end = current_start - min_gap
+                if new_end > prev_entry['start']:
+                    prev_entry['end'] = new_end
+                else:
+                    # 如果调整后会导致前一条字幕时间太短，则调整当前字幕的开始时间
+                    prev_entry['end'] = prev_entry['start'] + 0.5  # 至少保留 0.5 秒
+                    entry['start'] = prev_entry['end'] + min_gap
+
+            fixed_entries.append(entry)
+
+        return fixed_entries
 
     def _generate_srt_content(self, subtitle_entries: List[Dict]) -> str:
         """
