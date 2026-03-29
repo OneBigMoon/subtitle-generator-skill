@@ -118,8 +118,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true  # 禁用缓存确保使用最新 Dockerfile
 
       # =====================================================================
       # 步骤 7: 输出构建结果
