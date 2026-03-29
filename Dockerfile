@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir torch==2.1.0 torchaudio==2.1.0 --index-url https:
 # 安装 whisper 依赖
 RUN pip install --no-cache-dir more-itertools tiktoken
 
-# 从 GitHub 安装 openai-whisper (避免构建问题)
-RUN pip install --no-cache-dir git+https://github.com/openai/whisper.git@v20240930
+# 从 GitHub 安装 openai-whisper (使用 main 分支的最新版本)
+RUN pip install --no-cache-dir git+https://github.com/openai/whisper.git@main
 
 # 安装 API 依赖
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart pydantic
